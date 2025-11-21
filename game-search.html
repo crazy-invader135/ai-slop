@@ -37,8 +37,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 80%;
-      max-width: 600px;
+      width: 90%;
+      max-width: 1200px;
     }
 
     input[type="text"] {
@@ -49,28 +49,87 @@
       border: 2px solid #ff4500;
       background: #111;
       color: #fff;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     ul {
-      list-style: none;
-      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px; /* increased spacing to prevent overlap */
       padding: 0;
+      list-style: none;
+      justify-content: center;
     }
 
     li {
-      padding: 15px;
-      margin-bottom: 10px;
-      background: #111;
-      border: 2px solid #ff4500;
+      flex: 1 0 calc(14% - 20px); /* roughly 7 per row, minus gap */
+      aspect-ratio: 1 / 1; /* square */
+      border: 3px solid transparent;
       border-radius: 10px;
+      position: relative;
+      overflow: hidden;
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      min-width: 120px; /* minimum size for small screens */
+      max-width: 180px; /* maximum size on large screens */
+    }
+
+    li::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 3px; /* thickness of the border */
+      border-radius: 10px;
+      background: linear-gradient(90deg, #ff0000, #ff7f00, #ff0000, #ff7f00);
+      background-size: 200% 200%;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+              mask-composite: subtract;
+      mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      animation: gradientMove 5s linear infinite;
+      pointer-events: none;
+    }
+
+    li img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      border-radius: 5px;
     }
 
     li:hover {
       transform: scale(1.05);
       box-shadow: 0 0 15px #ff7f00, 0 0 30px #ff0000;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      li {
+        min-width: 100px;
+        max-width: 160px;
+      }
+    }
+
+    @media (max-width: 800px) {
+      li {
+        min-width: 90px;
+        max-width: 140px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      li {
+        flex: 1 0 calc(50% - 20px); /* 2 per row on very small screens */
+        min-width: 100px;
+      }
     }
   </style>
 </head>
@@ -82,8 +141,17 @@
     <input type="text" id="searchInput" placeholder="Search for a game...">
 
     <ul id="gameList">
-      <li onclick="location.href='cookie-clicker.html'">Cookie Clicker</li>
-      <!-- Add more games here in the future -->
+      <!-- Example games with images -->
+      <li onclick="location.href='cookie-clicker.html'">
+        <img src="https://files.catbox.moe/ix9qhz.png" alt="Cookie Clicker">
+      </li>
+      <li onclick="location.href='game2.html'">
+        <img src="https://via.placeholder.com/150/FF4500/FFFFFF?text=Game+2" alt="Game 2">
+      </li>
+      <li onclick="location.href='game3.html'">
+        <img src="https://via.placeholder.com/150/FF4500/FFFFFF?text=Game+3" alt="Game 3">
+      </li>
+      <!-- Add more games easily by copying <li> and changing the image src -->
     </ul>
   </div>
 
@@ -95,8 +163,9 @@
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.toLowerCase();
       games.forEach(game => {
-        if (game.textContent.toLowerCase().includes(query)) {
-          game.style.display = 'block';
+        const altText = game.querySelector('img')?.alt.toLowerCase() || "";
+        if (altText.includes(query)) {
+          game.style.display = 'flex';
         } else {
           game.style.display = 'none';
         }
