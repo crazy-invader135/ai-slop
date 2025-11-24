@@ -70,17 +70,17 @@
 
     /* Game wrapper & container */
     .game-wrapper {
-      position: fixed;
-      top: 120px; /* space below top bar */
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 60%;
-      height: calc(60% - 70px);
-    }
+  position: relative;
+  margin-top: 100px; /* <-- THIS WILL ALWAYS MOVE IT DOWN */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(100% - 70px);
+}
 
     .game-container {
       width: 80vw;
