@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SGW Settings</title>
+
+<style>
+body {
+    margin: 0;
+    background: #0b0b0d;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    position: relative;
+}
+
+#bgCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+@keyframes lavaWipe {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+}
+
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(20,20,20,0.85);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
+    z-index: 999;
+    border-bottom: 4px solid transparent;
+}
+
+.top-bar::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, red, orange, red, orange, red);
+    background-size: 200% 100%;
+    animation: lavaWipe 6s linear infinite;
+}
+
+.outline-button {
+    margin-left: 15px;
+    font-size: 18px;
+    padding: 10px 20px;
+    color: white;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.outline-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, red, orange, red, orange, red);
+    background-size: 200% 100%;
+    animation: lavaWipe 6s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.outline-button:hover {
+    transform: scale(1.08);
+    transition: 0.2s;
+}
+
+h1 {
+    margin-top: 120px;
+    text-align: center;
+    font-size: 3rem;
+    background: linear-gradient(90deg, red, orange, red, orange, red);
+    background-size: 200% 100%;
+    animation: lavaWipe 6s linear infinite;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.settings-box {
+    width: 80%;
+    max-width: 700px;
+    margin: 40px auto;
+    background: rgba(25,25,25,0.7);
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,100,0,0.4);
+    backdrop-filter: blur(4px);
+    position: relative;
+    z-index: 3;
+}
+
+.setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,80,0,0.2);
+    font-size: 20px;
+}
+
+.setting:last-child {
+    border-bottom: none;
+}
+
+input[type="text"] {
+    width: 220px;
+    padding: 5px 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ff7f00;
+    background: #111;
+    color: white;
+}
+
+select {
+    padding: 5px 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ff7f00;
+    background: #111;
+    color: white;
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="top-bar">
+    <button class="outline-button" onclick="location.href='index.html'">Home</button>
+    <button class="outline-button" onclick="location.href='game-search.html'">Games</button>
+</div>
+
+<h1>Settings</h1>
+
+<div class="settings-box">
+
+    <div class="setting">
+        <span>Choose Favicon & Title</span>
+        <select id="presetSelect">
+            <option value="default">Default</option>
+            <option value="Home">Google clasroom cloak</option>
+            <option value="Newtab">New tab cloak</option>
+        </select>
+    </div>
+
+    <div class="setting" id="customSettings" style="display:none;">
+        <span>Custom Favicon URL</span>
+        <input type="text" id="customFavicon" placeholder="https://example.com/favicon.png">
+    </div>
+
+    <div class="setting" id="customTitleSetting" style="display:none;">
+        <span>Custom Title</span>
+        <input type="text" id="customTitle" placeholder="Enter page title">
+    </div>
+
+</div>
+
+<script>
+// -------------------------------
+// LOCAL STORAGE HELPERS
+// -------------------------------
+function saveSetting(key, value){
+    localStorage.setItem("SGW_" + key, value);
+}
+
+function loadSetting(key, defaultValue){
+    let v = localStorage.getItem("SGW_" + key);
+    return v === null ? defaultValue : v;
+}
+
+// -------------------------------
+// PRESETS
+// -------------------------------
+const presets = {
+    default: {title: "SGW", favicon: "https://files.catbox.moe/gk7zpy.png"},
+    Clasroom: {title: "Home", favicon: "https://files.catbox.moe/eg2nns.png"},
+    NewTab: {title: "New Tab", favicon: "https://files.catbox.moe/cdep29.png"},
+};
+
+// -------------------------------
+// ELEMENTS
+// -------------------------------
+const presetSelect = document.getElementById("presetSelect");
+const customSettings = document.getElementById("customSettings");
+const customTitleSetting = document.getElementById("customTitleSetting");
+const customFavicon = document.getElementById("customFavicon");
+const customTitle = document.getElementById("customTitle");
+
+// -------------------------------
+// LOAD SAVED SETTINGS
+// -------------------------------
+let savedPreset = loadSetting("preset","default");
+presetSelect.value = savedPreset;
+
+if(savedPreset === "custom"){
+    customSettings.style.display = "flex";
+    customTitleSetting.style.display = "flex";
+    customFavicon.value = loadSetting("customFavicon","");
+    customTitle.value = loadSetting("customTitle","");
+}
+
+// Apply favicon & title immediately
+function applySetting(preset){
+    let data = presets[preset];
+
+    if(preset === "custom"){
+        data.favicon = customFavicon.value || "";
+        data.title = customTitle.value || "SGW";
+    }
+
+    document.title = data.title;
+
+    // update favicon
+    let link = document.querySelector("link[rel~='icon']");
+    if(!link){
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = data.favicon;
+}
+
+applySetting(savedPreset);
+
+// -------------------------------
+// EVENT LISTENERS
+// -------------------------------
+presetSelect.onchange = ()=>{
+    let preset = presetSelect.value;
+    saveSetting("preset", preset);
+    if(preset==="custom"){
+        customSettings.style.display = "flex";
+        customTitleSetting.style.display = "flex";
+    }else{
+        customSettings.style.display = "none";
+        customTitleSetting.style.display = "none";
+    }
+    applySetting(preset);
+};
+
+customFavicon.oninput = ()=>{
+    saveSetting("customFavicon", customFavicon.value);
+    applySetting("custom");
+};
+
+customTitle.oninput = ()=>{
+    saveSetting("customTitle", customTitle.value);
+    applySetting("custom");
+};
+</script>
+
+</body>
+</html>
