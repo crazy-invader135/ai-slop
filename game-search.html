@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Search Gaems</title>
+<title>Search Games</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
 body {
@@ -60,6 +60,11 @@ body {
 .top-bar button:hover {
   transform: scale(1.1);
   box-shadow: 0 0 15px #ff7f00, 0 0 30px #ff0000;
+}
+
+/* Active page button */
+.top-bar button.active {
+  box-shadow: 0 0 20px #ff7f00, 0 0 40px #ff0000;
 }
 
 /* Title */
@@ -136,8 +141,9 @@ li:hover {
 <canvas id="bgCanvas"></canvas>
 
 <div class="top-bar">
-  <button onclick="location.href='index.html'">Home</button>
+  <button class="active" onclick="location.href='index.html'">Home</button>
   <button onclick="location.href='game-search.html'">Games</button>
+  <button onclick="location.href='settings.html'">Settings</button>
 </div>
 
 <h1>Games Search</h1>
@@ -183,7 +189,6 @@ let height = canvas.height = window.innerHeight;
 const particles = [];
 const particleCount = 80;
 
-// Create particles
 for (let i = 0; i < particleCount; i++) {
   particles.push({
     x: Math.random() * width,
@@ -202,7 +207,7 @@ function animate() {
     for (let j = i + 1; j < particleCount; j++) {
       const dx = particles[i].x - particles[j].x;
       const dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const dist = Math.sqrt(dx*dx + dy*dy);
       if (dist < 100) {
         ctx.strokeStyle = `rgba(255,127,0,${1 - dist/100})`;
         ctx.lineWidth = 1;
